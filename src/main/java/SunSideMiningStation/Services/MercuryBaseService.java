@@ -11,6 +11,7 @@ import javax.ws.rs.core.MediaType;
 @Produces({MediaType.APPLICATION_JSON})
 public class MercuryBaseService {
 
+    @Path("seleniumOrder")
     @POST
     public void MakeSeleniumOrder(@QueryParam("requiredSeleniumNumber") int requiredSeleniumNumber){
         RobotSPD spd = new RobotSPD();
@@ -22,6 +23,7 @@ public class MercuryBaseService {
         return new BaseStatusModel();
     }
 
+    @Path("createBatteryOrder")
     @POST
     public void MakeCreateBatteryOrder(@QueryParam("BatteryNumber") int batteryNumber)
     {
@@ -29,6 +31,7 @@ public class MercuryBaseService {
         mBase.createBattery(batteryNumber);
     }
 
+    @Path("repairBatteryOrder")
     @POST
     public void MakeRepairBatteryOrder(@QueryParam("BatteryNumber") int batteryNumber)
     {
@@ -36,6 +39,7 @@ public class MercuryBaseService {
         mBase.repairBattery(batteryNumber);
     }
 
+    @Path("saveRobotOrder")
     @POST
     public void MakeSaveRobotOrder()
     {
