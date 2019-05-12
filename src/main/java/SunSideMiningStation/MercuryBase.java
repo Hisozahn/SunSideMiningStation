@@ -19,6 +19,10 @@ public class MercuryBase {
         return _instance;
     }
 
+    public BaseStatusModel getStatus() {
+        return _status;
+    }
+
     public void provideEnergy(String location, int requiredEnergy){
 
     }

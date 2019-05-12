@@ -20,7 +20,8 @@ public class MercuryBaseService {
 
     @GET
     public BaseStatusModel GetBaseStatus(){
-        return new BaseStatusModel();
+        MercuryBase mBase = MercuryBase.getInstance();
+        return mBase.getStatus();
     }
 
     @Path("createBatteryOrder")
