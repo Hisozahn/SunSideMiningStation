@@ -12,7 +12,7 @@ public class MiningStationService {
     @Path("{location}")
     public void MakeEnergyOrder(@PathParam("location") String location,
                                 @QueryParam("requiredEnergy") int requiredEnergy){
-        MercuryBase mBase = new MercuryBase();
+        MercuryBase mBase = MercuryBase.getInstance();
         mBase.provideEnergy(location, requiredEnergy);
     }
 }

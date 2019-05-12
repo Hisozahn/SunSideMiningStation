@@ -27,7 +27,7 @@ public class MercuryBaseService {
     @POST
     public void MakeCreateBatteryOrder(@QueryParam("BatteryNumber") int batteryNumber)
     {
-        MercuryBase mBase = new MercuryBase();
+        MercuryBase mBase = MercuryBase.getInstance();
         mBase.createBattery(batteryNumber);
     }
 
@@ -35,7 +35,7 @@ public class MercuryBaseService {
     @POST
     public void MakeRepairBatteryOrder(@QueryParam("BatteryNumber") int batteryNumber)
     {
-        MercuryBase mBase = new MercuryBase();
+        MercuryBase mBase = MercuryBase.getInstance();
         mBase.repairBattery(batteryNumber);
     }
 
