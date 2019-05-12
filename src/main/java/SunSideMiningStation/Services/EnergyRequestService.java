@@ -4,9 +4,9 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import SunSideMiningStation.MercuryBase;
 
-@Path("/miningStation")
+@Path("/energy")
 @Produces({MediaType.APPLICATION_JSON})
-public class MiningStationService {
+public class EnergyRequestService {
 
     @POST
     @Path("{location}")

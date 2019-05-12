@@ -18,7 +18,6 @@ public class App {
 
         try {
             httpServer.start();
-
             System.out.println("Jersey app started");
             System.in.read();
         } catch (IOException e) {
