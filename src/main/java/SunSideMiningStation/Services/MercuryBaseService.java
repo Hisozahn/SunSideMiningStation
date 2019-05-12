@@ -32,18 +32,28 @@ public class MercuryBaseService {
 
     @Path("createBatteryOrder")
     @POST
-    public void MakeCreateBatteryOrder(@QueryParam("BatteryNumber") int batteryNumber)
+    public JsonResponse MakeCreateBatteryOrder()
     {
         MercuryBase mBase = MercuryBase.getInstance();
-        mBase.createBattery(batteryNumber);
+        try {
+            mBase.createBattery();
+        } catch (IllegalStateException e) {
+            return new JsonResponse(JsonResponse.StatusCode.INTERNAL_SERVER_ERROR, e.getMessage());
+        }
+        return new JsonResponse(JsonResponse.StatusCode.OK);
     }
 
     @Path("repairBatteryOrder")
     @POST
-    public void MakeRepairBatteryOrder(@QueryParam("BatteryNumber") int batteryNumber)
+    public JsonResponse MakeRepairBatteryOrder(@QueryParam("BatteryNumber") int batteryNumber)
     {
         MercuryBase mBase = MercuryBase.getInstance();
-        mBase.repairBattery(batteryNumber);
+        try {
+            mBase.repairBattery(batteryNumber);
+        } catch (IndexOutOfBoundsException e) {
+            return new JsonResponse(JsonResponse.StatusCode.INTERNAL_SERVER_ERROR, e.getMessage());
+        }
+        return new JsonResponse(JsonResponse.StatusCode.OK);
     }
 
     @Path("saveRobotOrder")

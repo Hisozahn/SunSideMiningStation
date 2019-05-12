@@ -10,6 +10,7 @@ public class MercuryBase {
     private static MercuryBase _instance;
     private List<RobotSPD> _spds;
     private List<OldRobot> _olds;
+    private static final int BATTERY_COST_IN_SELENIUM = 5;
 
     private MercuryBase(BaseStatusModel status, List<RobotSPD> spds, List<OldRobot> olds) {
         _status = status;
@@ -66,12 +67,22 @@ public class MercuryBase {
 
     }
 
-    public void createBattery(int batteryNumber){
+    public void createBattery(){
+        int seleniumNumber = _status.getSeleniumNumber();
 
+        if (seleniumNumber < BATTERY_COST_IN_SELENIUM) {
+            throw new IllegalStateException("Amount of selenium at the base is insufficient");
+        }
+        _status.setSeleniumNumber(seleniumNumber - BATTERY_COST_IN_SELENIUM);
+        _status.setBatteryNumber(_status.getBatteryNumber() + 1);
+        _status.setWorkingBatteryNumber(_status.getWorkingBatteryNumber() + 1);
     }
 
     public void repairBattery(int batteryNumber){
-
+        if (batteryNumber >= _status.getBatteryNumber()) {
+            throw new ArrayIndexOutOfBoundsException("Invalid battery number");
+        }
+        // Batteries now are always functional
     }
 
     public void checkBaseStatus(){
