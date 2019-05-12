@@ -26,8 +26,21 @@ public class MercuryBase {
         return _instance;
     }
 
+    public RobotSPD getAvailableSPD() {
+        for (RobotSPD spd: _spds) {
+            if (!spd.isBusy()) {
+                return spd;
+            }
+        }
+        return null;
+    }
+
     public BaseStatusModel getStatus() {
         return _status;
+    }
+
+    void addSelenium(int seleniumNumber) {
+        _status.setSeleniumNumber(_status.getSeleniumNumber() + seleniumNumber);
     }
 
     public void provideEnergy(String location, int requiredEnergy){

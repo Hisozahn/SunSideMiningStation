@@ -13,9 +13,14 @@ public class MercuryBaseService {
 
     @Path("seleniumOrder")
     @POST
-    public void MakeSeleniumOrder(@QueryParam("requiredSeleniumNumber") int requiredSeleniumNumber){
-        RobotSPD spd = new RobotSPD();
-        spd.gatherSelenium(requiredSeleniumNumber);
+    public JsonResponse MakeSeleniumOrder(@QueryParam("requiredSeleniumNumber") int requiredSeleniumNumber){
+        MercuryBase mBase = MercuryBase.getInstance();
+        RobotSPD spd = mBase.getAvailableSPD();
+        if (spd == null) {
+            return new JsonResponse(JsonResponse.StatusCode.INTERNAL_SERVER_ERROR, "No SPDs available");
+        }
+        spd.gatherSelenium(mBase, requiredSeleniumNumber);
+        return new JsonResponse(JsonResponse.StatusCode.OK);
     }
 
     @GET
