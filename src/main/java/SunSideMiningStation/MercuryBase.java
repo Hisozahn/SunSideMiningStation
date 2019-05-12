@@ -9,10 +9,12 @@ public class MercuryBase {
     private BaseStatusModel _status;
     private static MercuryBase _instance;
     private List<RobotSPD> _spds;
+    private List<OldRobot> _olds;
 
-    private MercuryBase(BaseStatusModel status, List<RobotSPD> spds) {
+    private MercuryBase(BaseStatusModel status, List<RobotSPD> spds, List<OldRobot> olds) {
         _status = status;
         _spds = spds;
+        _olds = olds;
     }
 
     public static synchronized MercuryBase getInstance(){
@@ -20,8 +22,10 @@ public class MercuryBase {
             // TODO: Initialize it with values from some permanent storage
             List<RobotSPD> spds = new ArrayList<RobotSPD>();
             spds.add(new RobotSPD());
+            List<OldRobot> olds = new ArrayList<OldRobot>();
+            olds.add(new OldRobot());
             BaseStatusModel status = new BaseStatusModel(0, 10, 5, 5, 0);
-            _instance = new MercuryBase(status, spds);
+            _instance = new MercuryBase(status, spds, olds);
         }
         return _instance;
     }
@@ -33,6 +37,21 @@ public class MercuryBase {
             }
         }
         return null;
+    }
+
+    public RobotSPD getSPDByIndex(int index) {
+        try {
+            return _spds.get(index);
+        } catch (IndexOutOfBoundsException e) {
+            return null;
+        }
+    }
+
+    public OldRobot getAvailableOldRobot() {
+        if (_olds.isEmpty()) {
+            return null;
+        }
+        return _olds.get(0);
     }
 
     public BaseStatusModel getStatus() {

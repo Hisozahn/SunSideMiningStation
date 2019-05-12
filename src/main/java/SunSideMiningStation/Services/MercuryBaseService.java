@@ -2,6 +2,7 @@ package SunSideMiningStation.Services;
 
 import SunSideMiningStation.MercuryBase;
 import SunSideMiningStation.Models.BaseStatusModel;
+import SunSideMiningStation.OldRobot;
 import SunSideMiningStation.RobotSPD;
 
 import javax.ws.rs.*;
@@ -47,9 +48,19 @@ public class MercuryBaseService {
 
     @Path("saveRobotOrder")
     @POST
-    public void MakeSaveRobotOrder()
+    public JsonResponse MakeSaveRobotOrder(@QueryParam("SPDIndex") int spdIndex)
     {
-
+        MercuryBase mBase = MercuryBase.getInstance();
+        RobotSPD spd = mBase.getSPDByIndex(spdIndex);
+        if (spd == null) {
+            return new JsonResponse(JsonResponse.StatusCode.INTERNAL_SERVER_ERROR, "Invalid SPD index");
+        }
+        OldRobot old = mBase.getAvailableOldRobot();
+        if (old == null) {
+            return new JsonResponse(JsonResponse.StatusCode.INTERNAL_SERVER_ERROR, "No Old Robots available");
+        }
+        old.rescueSPD(spd);
+        return new JsonResponse(JsonResponse.StatusCode.OK);
     }
 
 }
