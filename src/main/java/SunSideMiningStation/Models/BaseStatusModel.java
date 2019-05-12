@@ -14,14 +14,12 @@ public class BaseStatusModel {
                            int energyNumber,
                            int batteryNumber,
                            int workingBatteryNumber,
-                           int requiredEnergyNumber,
-                           int spdsFree){
+                           int requiredEnergyNumber){
         _seleniumNumber = seleniumNumber;
         _energyNumber = energyNumber;
         _batteryNumber = batteryNumber;
         _workingBatteryNumber = workingBatteryNumber;
         _requiredEnergyNumber = requiredEnergyNumber;
-        _spdsFree = spdsFree;
     }
 
     public int getSeleniumNumber(){
@@ -42,10 +40,6 @@ public class BaseStatusModel {
 
     public int getRequiredEnergyNumber(){
         return _requiredEnergyNumber;
-    }
-
-    public int getSpdsFree() {
-        return _spdsFree;
     }
 
     public void setSeleniumNumber(int seleniumNumber){
