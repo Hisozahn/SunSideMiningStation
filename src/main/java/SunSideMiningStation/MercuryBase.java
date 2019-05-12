@@ -64,7 +64,10 @@ public class MercuryBase {
     }
 
     public void provideEnergy(String location, int requiredEnergy){
-
+        System.out.println("Request " + String.valueOf(requiredEnergy) + " energy to " + location);
+        System.out.println("Available energy: " + _status.getEnergyNumber());
+        System.out.println("Required energy: " + _status.getRequiredEnergyNumber());
+        _status.addEnergyRequest(requiredEnergy, location);
     }
 
     public void createBattery(){
