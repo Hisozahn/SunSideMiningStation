@@ -56,7 +56,21 @@
     </properties>
 
     <build>
-        <defaultGoal>install</defaultGoal>
+        <plugins>
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>2.5.3</version>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <addClasspath>true</addClasspath>
+                            <mainClass>SunSideMiningStation.App</mainClass>
+                        </manifest>
+                    </archive>
+                    <descriptor>depmerge.xml</descriptor>
+                </configuration>
+            </plugin>
+        </plugins>
     </build>
 
 </project>
