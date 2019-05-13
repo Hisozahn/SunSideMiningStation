@@ -136,6 +136,7 @@ public class BaseStatusModel {
         checkWeather();
         adjustTrajectory(location);
         _energyNumber -= energy;
+        _requiredEnergyNumber -= energy;
         laserIsBusy = true;
         Thread thr = new Thread( new Runnable() 
         {
