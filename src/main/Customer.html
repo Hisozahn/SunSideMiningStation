@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Energy order</title>
+</head>
+<body>
+<form onsubmit="alert('Energy was ordered!');" action="http://localhost:8080/rest/energy" method="post">
+    <p>Make an order to get energy:</p>
+    <p>Enter your location: <input type="text" name="location" value="Earth"></p>
+    <p>Enter required number of energy: <input type="text" name="energy" value="20"></p>
+    <p><input type=submit value="Make an order"></p>
+</form>
+</body>
+</html>
