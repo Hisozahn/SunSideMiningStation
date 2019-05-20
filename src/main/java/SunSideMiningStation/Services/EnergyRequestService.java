@@ -9,8 +9,9 @@ import SunSideMiningStation.MercuryBase;
 public class EnergyRequestService {
 
     @POST
-    public JsonResponse MakeEnergyOrder(@QueryParam("location") String location,
-                                @QueryParam("requiredEnergy") int requiredEnergy){
+    public JsonResponse MakeEnergyOrder(@FormParam("location") String location,
+                                @FormParam("requiredEnergy") int requiredEnergy){
+        System.out.println("Loc: " + location + "; ener " + requiredEnergy);
         MercuryBase mBase = MercuryBase.getInstance();
         mBase.provideEnergy(location, requiredEnergy);
         return new JsonResponse(JsonResponse.StatusCode.OK);
