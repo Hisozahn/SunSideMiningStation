@@ -1,5 +1,6 @@
 package SunSideMiningStation.Models;
 
+import java.io.*;
 import java.util.Queue;
 import java.util.LinkedList;
 
@@ -11,6 +12,8 @@ public class BaseStatusModel {
     private int _requiredEnergyNumber;
     private boolean _energyInsufficient;
     private int _spdsFree;
+    private String _energyRequestCSV = "requests.csv";
+    private final Object csvMonitor = new Object();
    
     private int batterySimulTime = 500;
     private int laserSimulTime = 2000;
@@ -26,22 +29,73 @@ public class BaseStatusModel {
         }
     };
 
-    private Queue<EnergyRequest> _queue;
+    private Queue<EnergyRequest> readCSV() {
+
+        File file = new File(_energyRequestCSV);
+
+        try {
+            file.createNewFile();
+
+            BufferedReader csvReader = new BufferedReader(new FileReader(file));
+            String row;
+            LinkedList<EnergyRequest> queue = new LinkedList<EnergyRequest>();
+            while ((row = csvReader.readLine()) != null) {
+                String[] data = row.split(",");
+                int energy;
+
+                if (data.length != 2)
+                    throw new IOException("Invalid csv file");
+
+                energy = Integer.parseInt(data[1]);
+
+                queue.add(new EnergyRequest(energy, data[0]));
+            }
+            csvReader.close();
+
+            return queue;
+
+        } catch (IOException e) {
+            System.err.println("Fatal exception: csv file io error: " + e.getMessage());
+            System.exit(1);
+
+            return null;
+        }
+    }
+
+    private void writeCSV(Queue<EnergyRequest> queue) {
+        try {
+            FileWriter csvWriter = new FileWriter(_energyRequestCSV);
+
+            for (EnergyRequest e: queue) {
+                csvWriter.append(e.location + "," + e.energy + "\n");
+            }
+
+            csvWriter.flush();
+            csvWriter.close();
+        } catch (IOException e) {
+            System.err.println("Fatal exception: csv file io error: " + e.getMessage());
+            System.exit(1);
+        }
+    }
 
     public BaseStatusModel(){}
 
     public BaseStatusModel(int seleniumNumber,
                            int energyNumber,
                            int batteryNumber,
-                           int workingBatteryNumber,
-                           int requiredEnergyNumber){
+                           int workingBatteryNumber) {
+        synchronized (csvMonitor) {
+            Queue<EnergyRequest> queue = readCSV();
+            _requiredEnergyNumber = 0;
+            for (EnergyRequest e: queue) {
+                _requiredEnergyNumber += e.energy;
+            }
+        }
         _seleniumNumber = seleniumNumber;
         _energyNumber = energyNumber;
         _batteryNumber = batteryNumber;
         _workingBatteryNumber = workingBatteryNumber;
-        _requiredEnergyNumber = requiredEnergyNumber;
-        _energyInsufficient = requiredEnergyNumber > energyNumber;
-        _queue = new LinkedList<EnergyRequest>();
+        _energyInsufficient = _requiredEnergyNumber > energyNumber;
 
         Thread thr = new Thread( new Runnable() 
         {
@@ -122,7 +176,11 @@ public class BaseStatusModel {
 
     public void addEnergyRequest(int energy, String location) {
         if(energy > 0) {
-            _queue.add(new EnergyRequest(energy,location));
+            synchronized (csvMonitor) {
+                Queue<EnergyRequest> queue = readCSV();
+                queue.add(new EnergyRequest(energy,location));
+                writeCSV(queue);
+            }
             _requiredEnergyNumber += energy;
         }
     }
@@ -159,22 +217,27 @@ public class BaseStatusModel {
 
     }
 
-    private void executeRequest() {
-        if(_queue.isEmpty()) return;
-        EnergyRequest enreq = _queue.poll( );
+    private void executeRequestUnsafe(Queue<EnergyRequest> queue) {
+        if(queue.isEmpty()) return;
+        EnergyRequest enreq = queue.poll( );
         fireLaser(enreq.energy, enreq.location);
     }
 
     private void baseLoopTick( ) throws InterruptedException {
-        if(_queue.isEmpty() == false && laserIsBusy == false) {
-            EnergyRequest enreq = _queue.peek( );
-            if( enreq.energy <= _energyNumber ) {
-                executeRequest( );
+        synchronized (csvMonitor) {
+            Queue<EnergyRequest> queue = readCSV();
+
+            if (queue.isEmpty() == false && laserIsBusy == false) {
+                EnergyRequest enreq = queue.peek();
+                if (enreq.energy <= _energyNumber) {
+                    executeRequestUnsafe(queue);
+                }
             }
+
+            writeCSV(queue);
         }
         System.out.println("Avail energy: " + String.valueOf(_energyNumber) + 
-                            " Req energy: " + String.valueOf(_requiredEnergyNumber) + 
-                            " Q empty: " + String.valueOf(_queue.isEmpty( )) +
+                            " Req energy: " + String.valueOf(_requiredEnergyNumber) +
                             " Laser busy:" + String.valueOf(laserIsBusy));
         Thread.sleep(baseTickTime);
     }

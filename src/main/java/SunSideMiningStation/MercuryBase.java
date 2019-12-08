@@ -44,7 +44,7 @@ public class MercuryBase {
         thr.start( );
     }
 
-    public static synchronized MercuryBase getInstance(){
+    public static synchronized MercuryBase getInstance() {
         if(_instance == null){
             // TODO: Initialize it with values from some permanent storage
             List<RobotSPD> spds = new ArrayList<RobotSPD>();
@@ -53,7 +53,7 @@ public class MercuryBase {
             olds.add(new OldRobot());
             List<Staff> staff = new ArrayList<Staff>();
             staff.add(new Staff());
-            BaseStatusModel status = new BaseStatusModel(0, 10, 5, 5, 0);
+            BaseStatusModel status = new BaseStatusModel(0, 10, 5, 5);
             _instance = new MercuryBase(status, spds, olds, staff);
         }
         return _instance;
