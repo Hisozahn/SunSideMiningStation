@@ -5,20 +5,26 @@
     <title>Energy order</title>
 </head>
 <body>
+<form action="http://localhost:8080/rest/energy/login" method="post">
+    <p>Login to the system:</p>
+    <p>Enter your location: <input type="text" name="location" value="Earth"></p>
+    <p>Enter your password: <input type="text" name="password" value=""></p>
+    <p><input type=submit value="Login"></p>
+</form>
 <form onsubmit="alert('Energy was ordered!');" action="http://localhost:8080/rest/energy/request" method="post">
     <p>Make an order to get energy:</p>
-    <p>Enter your location: <input type="text" name="location" value="Earth"></p>
+    <p>Enter your access token: <input type="text" name="token" value=""></p>
     <p>Enter required number of energy: <input type="text" name="requiredEnergy" value="20"></p>
     <p><input type=submit value="Make an order"></p>
 </form>
 <form action="http://localhost:8080/rest/energy/check_requests" method="post">
     <p>Check your orders:</p>
-    <p>Enter your location: <input type="text" name="location" value="Earth"></p>
+    <p>Enter your access token: <input type="text" name="token" value=""></p>
     <p><input type=submit value="Check requests"></p>
 </form>
 <form action="http://localhost:8080/rest/energy/cancel_request" method="post">
     <p>Cancel an energy order:</p>
-    <p>Enter your location: <input type="text" name="location" value="Earth"></p>
+    <p>Enter your access token: <input type="text" name="token" value=""></p>
     <p>Enter request id: <input type="text" name="requestId" value="0"></p>
     <p><input type=submit value="Cancel request"></p>
 </form>
