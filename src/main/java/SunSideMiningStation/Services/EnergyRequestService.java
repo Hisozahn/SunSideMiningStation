@@ -49,6 +49,8 @@ public class EnergyRequestService {
         String location = getLocation(token);
         if (location == null)
             return new JsonResponse(JsonResponse.StatusCode.INTERNAL_SERVER_ERROR, "Invalid auth token");
+        if (requiredEnergy <1 || requiredEnergy >10000)
+            return new JsonResponse(JsonResponse.StatusCode.INTERNAL_SERVER_ERROR, "Invalid energy request");
 
         MercuryBase mBase = MercuryBase.getInstance();
         mBase.provideEnergy(location, requiredEnergy);
