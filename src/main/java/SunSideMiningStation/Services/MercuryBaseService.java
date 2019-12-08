@@ -4,6 +4,7 @@ import SunSideMiningStation.MercuryBase;
 import SunSideMiningStation.Models.BaseStatusModel;
 import SunSideMiningStation.OldRobot;
 import SunSideMiningStation.RobotSPD;
+import SunSideMiningStation.Staff;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -62,6 +63,7 @@ public class MercuryBaseService {
     {
         MercuryBase mBase = MercuryBase.getInstance();
         RobotSPD spd = mBase.getSPDByIndex(spdIndex);
+        Staff staff = mBase.getAvailableStaff();
         if (spd == null) {
             return new JsonResponse(JsonResponse.StatusCode.INTERNAL_SERVER_ERROR, "Invalid SPD index");
         }
@@ -69,7 +71,15 @@ public class MercuryBaseService {
         if (old == null) {
             return new JsonResponse(JsonResponse.StatusCode.INTERNAL_SERVER_ERROR, "No Old Robots available");
         }
-        old.rescueSPD(spd);
+        if (staff == null) {
+            return new JsonResponse(JsonResponse.StatusCode.INTERNAL_SERVER_ERROR, "No staff available");
+        }
+        try {
+            old.moveToSPD(spd, staff);
+            staff.saveSPD(spd, old);
+        } catch (IllegalStateException e) {
+            return new JsonResponse(JsonResponse.StatusCode.INTERNAL_SERVER_ERROR, e.getMessage());
+        }
         return new JsonResponse(JsonResponse.StatusCode.OK);
     }
 

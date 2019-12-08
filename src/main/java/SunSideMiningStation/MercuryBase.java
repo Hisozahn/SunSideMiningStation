@@ -10,12 +10,14 @@ public class MercuryBase {
     private static MercuryBase _instance;
     private List<RobotSPD> _spds;
     private List<OldRobot> _olds;
+    private List<Staff> _staff;
     private static final int BATTERY_COST_IN_SELENIUM = 5;
 
-    private MercuryBase(BaseStatusModel status, List<RobotSPD> spds, List<OldRobot> olds) {
+    private MercuryBase(BaseStatusModel status, List<RobotSPD> spds, List<OldRobot> olds, List<Staff> staff) {
         _status = status;
         _spds = spds;
         _olds = olds;
+        _staff = staff;
     }
 
     public static synchronized MercuryBase getInstance(){
@@ -25,8 +27,10 @@ public class MercuryBase {
             spds.add(new RobotSPD());
             List<OldRobot> olds = new ArrayList<OldRobot>();
             olds.add(new OldRobot());
+            List<Staff> staff = new ArrayList<Staff>();
+            staff.add(new Staff());
             BaseStatusModel status = new BaseStatusModel(0, 10, 5, 5, 0);
-            _instance = new MercuryBase(status, spds, olds);
+            _instance = new MercuryBase(status, spds, olds, staff);
         }
         return _instance;
     }
@@ -53,6 +57,13 @@ public class MercuryBase {
             return null;
         }
         return _olds.get(0);
+    }
+
+    public Staff getAvailableStaff() {
+        if (_staff.isEmpty()) {
+            return null;
+        }
+        return _staff.get(0);
     }
 
     public BaseStatusModel getStatus() {
