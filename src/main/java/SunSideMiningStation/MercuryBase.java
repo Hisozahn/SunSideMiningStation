@@ -2,7 +2,6 @@ package SunSideMiningStation;
 
 import SunSideMiningStation.Models.BaseStatusModel;
 import SunSideMiningStation.Models.OrderInfo;
-import javafx.util.Pair;
 
 import java.util.ArrayList;
 import java.util.List;
