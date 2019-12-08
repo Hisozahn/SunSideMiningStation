@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Energy order</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="widget">
+    <h3 class="widget-title">Menu</h3>
+    <ul class="widget-list">
+        <li><a href="Customer.html">Main</a></li>
+        <li><a href="CreateOrder.html">Create an order</a></li>
+        <li><a href="CheckOrder.html">Check order status</a></li>
+    </ul>
+</div>
+<header>
+    <div>
+        <h1>Sun Side Mining Station</h1>
+    </div>
+</header>
+<form action="http://localhost:8080/rest/energy/cancel_request" method="post">
+    <h2>Cancel an energy order:</h2>
+    <div class="field">
+        <label for>Enter your access token: </label>
+        <input type="text" name="token" value="">
+    </div>
+    <div class="field">
+        <label for>Enter request id: </label>
+        <input type="text" name="requestId" value="0">
+    </div>
+    <div>
+        <input class="button" type=submit value="Cancel request">
+    </div>
+</form>
+</body>
+</html>

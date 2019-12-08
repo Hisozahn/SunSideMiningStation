@@ -1,0 +1,118 @@
+header{
+    height: 300px;
+    background: url("img/image1.jpg") repeat-x center;
+    border-radius: 30px;
+    position: absolute;
+    right: 1%;
+    width: 73%;
+    padding: 1%
+}
+body {
+    padding: 0;
+    font-family: "Comic Sans MS";
+    font-size: 14px;
+    line-height: 18px;
+    color: white;
+    background: darkslateblue;
+}
+
+form {
+    position: relative;
+    width  : 400px;
+    height : 180px;
+    margin : 20px auto;
+    border: 2px solid #fff;
+    border-radius: 15px;
+    padding: 10px;
+    top: 340px;
+}
+
+h1 {
+    font-family: "Comic Sans MS";
+    font-size: 36px;
+    line-height: 36px;
+    text-align: center;
+}
+
+h2 {
+    font-family: "Comic Sans MS";
+    font-size: 20px;
+    line-height: 20px;
+    text-align: center;
+}
+
+label {float:left;}
+
+.site-header{
+    margin-bottom: 190px;
+}
+
+.container{
+    width: 480px;
+    margin: 0 auto;
+}
+
+.site-header img {
+    display: block;
+}
+
+.field {clear:both; text-align:right;}
+
+div {
+    line-height: 40px;
+}
+
+.button{
+    font-family: "Comic Sans MS";
+    font-size: 14px;
+    color: white;
+    width: 120px;
+    height: 30px;
+    -moz-border-radius:  5px; /* Firefox */
+    -webkit-border-radius:  5px; /* Safari 4 */
+    border-radius:  5px; /* IE 9, Safari 5, Chrome */
+    background: -webkit-gradient(linear, 0 0, 0 100%, from(#ffb200), to(#ff6001));
+    background: -moz-linear-gradient(#ffb200, #ff6001);
+    margin: 10px auto;
+    position: absolute;
+    left: 0; right: 0; bottom: 10px;
+}
+
+.widget {
+    padding: 1%;
+    background: white;
+    font-family: "Comic Sans MS";
+    width: 20%;
+    border-radius:  30px;
+    position: absolute;
+    height: 300px;
+    left: 1%
+}
+.widget-title {
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: darkslateblue;
+    font-size: 16px;
+    padding-left: 15px;
+    margin-bottom: 15px;
+    border-left: 2px solid #ff6001;
+}
+.widget-list {
+    padding: 0;
+    list-style: none;
+}
+.widget-list a:before {
+    content: "\2014";
+    margin-right: 14px;
+}
+.widget-list a {
+    text-decoration: none;
+    outline: none;
+    display: block;
+    padding: 6px 0;
+    letter-spacing: 1px;
+    font-weight: 300;
+    color: darkslateblue;
+    transition: .3s linear;
+}
+.widget-list a:hover {color: #ff6001;}
