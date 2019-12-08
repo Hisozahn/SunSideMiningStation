@@ -1,6 +1,8 @@
 package SunSideMiningStation;
 
 import SunSideMiningStation.Models.BaseStatusModel;
+import SunSideMiningStation.Models.OrderInfo;
+import javafx.util.Pair;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -103,6 +105,14 @@ public class MercuryBase {
         System.out.println("Available energy: " + _status.getEnergyNumber());
         System.out.println("Required energy: " + _status.getRequiredEnergyNumber());
         _status.addEnergyRequest(requiredEnergy, location);
+    }
+
+    public List<OrderInfo> checkRequests(String location) {
+        return _status.getEnergyRequests(location);
+    }
+
+    public boolean cancelRequest(String location, int id) {
+        return _status.cancelRequest(location, id);
     }
 
     public void createBattery(){
