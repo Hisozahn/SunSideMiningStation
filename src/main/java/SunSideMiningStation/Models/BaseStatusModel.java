@@ -9,6 +9,7 @@ public class BaseStatusModel {
     private int _batteryNumber;
     private int _workingBatteryNumber;
     private int _requiredEnergyNumber;
+    private boolean _energyInsufficient;
     private int _spdsFree;
    
     private int batterySimulTime = 500;
@@ -39,6 +40,7 @@ public class BaseStatusModel {
         _batteryNumber = batteryNumber;
         _workingBatteryNumber = workingBatteryNumber;
         _requiredEnergyNumber = requiredEnergyNumber;
+        _energyInsufficient = requiredEnergyNumber > energyNumber;
         _queue = new LinkedList<EnergyRequest>();
 
         Thread thr = new Thread( new Runnable() 
@@ -70,6 +72,8 @@ public class BaseStatusModel {
         thr1.start( );
     }
 
+    public boolean isEnergyInsufficient() { return _energyInsufficient; }
+
     public int getSeleniumNumber(){
         return _seleniumNumber;
     }
@@ -96,6 +100,7 @@ public class BaseStatusModel {
 
     public void setEnergyNumber(int energyNumber){
         _energyNumber = energyNumber;
+        _energyInsufficient = _requiredEnergyNumber > energyNumber;
     }
 
     public void setBatteryNumber(int batteryNumber){
@@ -108,6 +113,7 @@ public class BaseStatusModel {
 
     public void setRequiredEnergyNumber(int requiredEnergyNumber){
         _requiredEnergyNumber = requiredEnergyNumber;
+        _energyInsufficient = requiredEnergyNumber > _energyNumber;
     }
 
     public void setSpdsFree(int spdsFree) {
@@ -135,7 +141,7 @@ public class BaseStatusModel {
 
         checkWeather();
         adjustTrajectory(location);
-        _energyNumber -= energy;
+        setEnergyNumber(_energyNumber - energy);
         _requiredEnergyNumber -= energy;
         laserIsBusy = true;
         Thread thr = new Thread( new Runnable() 
@@ -174,7 +180,7 @@ public class BaseStatusModel {
     }
 
     public void batterySimulStub( ) throws InterruptedException {
-        _energyNumber += _batteryNumber;
+        setEnergyNumber(_energyNumber + _batteryNumber);
         Thread.sleep(batterySimulTime);
     }
 
