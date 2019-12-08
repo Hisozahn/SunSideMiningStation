@@ -20,7 +20,7 @@ public class Staff {
         _location = location;
     }
 
-    public void saveSPD(RobotSPD spd, OldRobot old) throws IllegalStateException {
+    public void saveSPD(RobotSPD spd, OldRobot old) throws IllegalStateException, InterruptedException {
         if (!spd.isGlitched())
             throw new IllegalStateException("SPD does not need to be saved");
 

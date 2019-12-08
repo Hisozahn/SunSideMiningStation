@@ -4,6 +4,8 @@ import SunSideMiningStation.Models.BaseStatusModel;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class MercuryBase {
     private BaseStatusModel _status;
@@ -12,12 +14,34 @@ public class MercuryBase {
     private List<OldRobot> _olds;
     private List<Staff> _staff;
     private static final int BATTERY_COST_IN_SELENIUM = 5;
+    private ConcurrentLinkedQueue<SaveRobotOrder> _saveRobotQueue;
+    private ConcurrentLinkedQueue<SeleniumOrder> _seleniumOrderQueue;
+    private final int tickTime = 1000;
+    public static final int maxGatherSelenium = 10;
 
     private MercuryBase(BaseStatusModel status, List<RobotSPD> spds, List<OldRobot> olds, List<Staff> staff) {
         _status = status;
         _spds = spds;
         _olds = olds;
         _staff = staff;
+        _saveRobotQueue = new ConcurrentLinkedQueue<SaveRobotOrder>();
+        _seleniumOrderQueue = new ConcurrentLinkedQueue<SeleniumOrder>();
+
+        Thread thr = new Thread( new Runnable()
+        {
+            public void run() {
+                while(true) {
+                    try {
+                        saveSimul( );
+                        orderSimul();
+                        Thread.sleep(tickTime);
+                    } catch( Exception e ) {
+                        System.out.println(e.getMessage());
+                    }
+                }
+            }
+        });
+        thr.start( );
     }
 
     public static synchronized MercuryBase getInstance(){
@@ -109,5 +133,54 @@ public class MercuryBase {
 
     private boolean checkWeather(){
         return false;
+    }
+
+    public boolean addSaveRobotOrder(SaveRobotOrder order) {
+        if (_saveRobotQueue.contains(order))
+            return false;
+        _saveRobotQueue.add(order);
+
+        return true;
+    }
+    public boolean addGatherSeleniumOrder(SeleniumOrder order) {
+        if (_seleniumOrderQueue.contains(order))
+            return false;
+        _seleniumOrderQueue.add(order);
+
+        return true;
+    }
+
+
+    public void saveSimul() throws InterruptedException {
+        SaveRobotOrder order;
+
+        try {
+            order = _saveRobotQueue.remove();
+        } catch (NoSuchElementException e) {
+            return;
+        }
+
+        order.getOld().moveToSPD(order.getSpd(), order.getStaff());
+        order.getStaff().saveSPD(order.getSpd(), order.getOld());
+
+        System.out.println("SPD saved");
+    }
+
+    public void orderSimul() throws InterruptedException {
+        SeleniumOrder order;
+
+        try {
+            order = _seleniumOrderQueue.remove();
+        } catch (NoSuchElementException e) {
+            return;
+        }
+
+        if (!order.getSpd().gatherSelenium(order.getSeleniumNum())) {
+            System.out.println("SPD did not finish gathering");
+            return;
+        }
+
+        this.addSelenium(order.getSeleniumNum());
+        System.out.println("SPD gathered " + order.getSeleniumNum() + " selenium");
     }
 }

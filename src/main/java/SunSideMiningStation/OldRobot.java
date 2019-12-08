@@ -2,7 +2,7 @@ package SunSideMiningStation;
 
 public class OldRobot extends Robot {
 
-    public void moveToSPD(RobotSPD spd, Staff staff) throws IllegalStateException {
+    public void moveToSPD(RobotSPD spd, Staff staff) throws IllegalStateException, InterruptedException {
         if (!spd.isGlitched())
             return;
 

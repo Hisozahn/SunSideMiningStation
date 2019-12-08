@@ -11,16 +11,26 @@ public class RobotSPD extends Robot {
     }
     boolean isBusy() { return _location != Location.AT_BASE; }
 
-    public void gatherSelenium(MercuryBase base, int requiredSeleniumNumber){
+    public boolean gatherSelenium(int requiredSeleniumNumber) throws InterruptedException, IllegalArgumentException {
+        if (requiredSeleniumNumber > MercuryBase.maxGatherSelenium || requiredSeleniumNumber < 0)
+            throw new IllegalArgumentException("Can't gather this amount of selenium");
+
+        this.move(Location.NEAR_SELENIUM_POOL);
+
         if (_random.nextDouble() < 0.1) {
-            _location = Location.NEAR_SELENIUM_POOL;
             _glitched = true;
-        } else {
-            base.addSelenium(requiredSeleniumNumber);
+
+            return false;
         }
+
+        Thread.sleep(100 * requiredSeleniumNumber);
+
+        this.move(Location.AT_BASE);
+
+        return true;
     }
 
-    public void saveHuman(Staff staff) {
+    public void saveHuman(Staff staff) throws InterruptedException {
         _glitched = false;
 
         carryHuman(staff);

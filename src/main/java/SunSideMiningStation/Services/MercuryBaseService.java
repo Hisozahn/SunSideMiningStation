@@ -1,10 +1,7 @@
 package SunSideMiningStation.Services;
 
-import SunSideMiningStation.MercuryBase;
+import SunSideMiningStation.*;
 import SunSideMiningStation.Models.BaseStatusModel;
-import SunSideMiningStation.OldRobot;
-import SunSideMiningStation.RobotSPD;
-import SunSideMiningStation.Staff;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -21,7 +18,12 @@ public class MercuryBaseService {
         if (spd == null) {
             return new JsonResponse(JsonResponse.StatusCode.INTERNAL_SERVER_ERROR, "No SPDs available");
         }
-        spd.gatherSelenium(mBase, requiredSeleniumNumber);
+        if (requiredSeleniumNumber < 0 || requiredSeleniumNumber > MercuryBase.maxGatherSelenium) {
+            return new JsonResponse(JsonResponse.StatusCode.INTERNAL_SERVER_ERROR, "Invalid selenium amount requested");
+        }
+        if (!mBase.addGatherSeleniumOrder(new SeleniumOrder(spd, requiredSeleniumNumber)))
+            return new JsonResponse(JsonResponse.StatusCode.INTERNAL_SERVER_ERROR, "Operation is already in progress");
+
         return new JsonResponse(JsonResponse.StatusCode.OK);
     }
 
@@ -74,12 +76,10 @@ public class MercuryBaseService {
         if (staff == null) {
             return new JsonResponse(JsonResponse.StatusCode.INTERNAL_SERVER_ERROR, "No staff available");
         }
-        try {
-            old.moveToSPD(spd, staff);
-            staff.saveSPD(spd, old);
-        } catch (IllegalStateException e) {
-            return new JsonResponse(JsonResponse.StatusCode.INTERNAL_SERVER_ERROR, e.getMessage());
-        }
+
+        if (!mBase.addSaveRobotOrder(new SaveRobotOrder(spd, staff, old)))
+            return new JsonResponse(JsonResponse.StatusCode.INTERNAL_SERVER_ERROR, "Operation is already in progress");
+
         return new JsonResponse(JsonResponse.StatusCode.OK);
     }
 

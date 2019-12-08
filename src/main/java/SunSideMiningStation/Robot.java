@@ -3,6 +3,7 @@ package SunSideMiningStation;
 import SunSideMiningStation.Location;
 
 abstract class Robot {
+    private final int travelTime = 1000;
     protected Location _location = Location.AT_BASE;
     protected Staff _passenger = null;
 
@@ -33,7 +34,11 @@ abstract class Robot {
         return false;
     }
 
-    public void move(Location location) {
+    public void move(Location location) throws InterruptedException {
+        if (location == _location)
+            return;
+
+        Thread.sleep(travelTime);
         _location = location;
 
         if (_passenger != null)
