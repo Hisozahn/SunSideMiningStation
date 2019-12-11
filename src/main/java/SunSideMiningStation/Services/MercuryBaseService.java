@@ -6,7 +6,7 @@ import SunSideMiningStation.Models.BaseStatusModel;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 
-@Path("/mercuryBase")
+@Path("/rest/mercuryBase")
 @Produces({MediaType.APPLICATION_JSON})
 public class MercuryBaseService {
 

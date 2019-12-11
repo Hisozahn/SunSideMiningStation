@@ -10,7 +10,7 @@ import java.io.IOException;
 import java.net.URI;
 
 public class App {
-    private static final URI BASE_URI = URI.create("http://localhost:8080/rest/");
+    private static final URI BASE_URI = URI.create("http://localhost:8080/");
 
     public static void main(String[] args) {
         ServiceLocator locator = ServiceLocatorUtilities.createAndPopulateServiceLocator();

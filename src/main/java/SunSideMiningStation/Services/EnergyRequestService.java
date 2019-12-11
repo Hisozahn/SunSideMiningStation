@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-@Path("/energy")
+@Path("/rest/energy")
 @Produces({MediaType.APPLICATION_JSON})
 public class EnergyRequestService {
     private static Map<String, String> passes = new HashMap<String, String>();
