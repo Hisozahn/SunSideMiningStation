@@ -99,11 +99,11 @@ public class MercuryBase {
         _status.setSeleniumNumber(_status.getSeleniumNumber() + seleniumNumber);
     }
 
-    public void provideEnergy(String location, int requiredEnergy){
+    public int provideEnergy(String location, int requiredEnergy){
         System.out.println("Request " + String.valueOf(requiredEnergy) + " energy to " + location);
         System.out.println("Available energy: " + _status.getEnergyNumber());
         System.out.println("Required energy: " + _status.getRequiredEnergyNumber());
-        _status.addEnergyRequest(requiredEnergy, location);
+        return _status.addEnergyRequest(requiredEnergy, location);
     }
 
     public List<OrderInfo> checkRequests(String location) {

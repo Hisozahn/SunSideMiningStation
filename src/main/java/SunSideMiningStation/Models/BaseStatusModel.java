@@ -27,10 +27,12 @@ public class BaseStatusModel {
         public int id;
         public int energy;
         public String location;
-        public EnergyRequest(int id, int energy, String location){
+        public String status;
+        public EnergyRequest(int id, int energy, String location, String status){
             this.id = id;
             this.energy = energy;
             this.location = location;
+            this.status = status;
         }
     };
 
@@ -49,13 +51,13 @@ public class BaseStatusModel {
                 int energy;
                 int id;
 
-                if (data.length != 3)
-                    throw new IOException("Invalid csv file");
+                if (data.length != 4)
+                    throw new IOException("Invalid csv file (format might have changed, delete requests.csv)");
 
                 id = Integer.parseInt(data[0]);
                 energy = Integer.parseInt(data[2]);
 
-                queue.add(new EnergyRequest(id, energy, data[1]));
+                queue.add(new EnergyRequest(id, energy, data[1], data[3]));
             }
             csvReader.close();
 
@@ -74,7 +76,7 @@ public class BaseStatusModel {
             FileWriter csvWriter = new FileWriter(_energyRequestCSV);
 
             for (EnergyRequest e: queue) {
-                csvWriter.append(e.id + "," + e.location + "," + e.energy + "\n");
+                csvWriter.append(e.id + "," + e.location + "," + e.energy + "," + e.status + "\n");
             }
 
             csvWriter.flush();
@@ -142,7 +144,7 @@ public class BaseStatusModel {
             Queue<EnergyRequest> queue = readCSV();
             for (EnergyRequest e: queue) {
                 if (e.location.equals(location))
-                    requests.add(new OrderInfo(e.id, e.energy));
+                    requests.add(new OrderInfo(e.id, e.energy, e.status));
             }
         }
 
@@ -219,15 +221,19 @@ public class BaseStatusModel {
         _spdsFree = spdsFree;
     }
 
-    public void addEnergyRequest(int energy, String location) {
+    public int addEnergyRequest(int energy, String location) {
         if(energy > 0) {
             synchronized (csvMonitor) {
                 Queue<EnergyRequest> queue = readCSV();
-                queue.add(new EnergyRequest(++_lastEnergyRequestId, energy,location));
+                queue.add(new EnergyRequest(++_lastEnergyRequestId, energy,location, "in progress"));
                 writeCSV(queue);
             }
             _requiredEnergyNumber += energy;
+
+            return _lastEnergyRequestId;
         }
+
+        return -1;
     }
 
     private void checkWeather() {
@@ -262,10 +268,9 @@ public class BaseStatusModel {
 
     }
 
-    private void executeRequestUnsafe(Queue<EnergyRequest> queue) {
-        if(queue.isEmpty()) return;
-        EnergyRequest enreq = queue.poll( );
+    private void executeRequestUnsafe(EnergyRequest enreq) {
         fireLaser(enreq.energy, enreq.location);
+        enreq.status = "done";
     }
 
     private void baseLoopTick( ) throws InterruptedException {
@@ -273,9 +278,15 @@ public class BaseStatusModel {
             Queue<EnergyRequest> queue = readCSV();
 
             if (queue.isEmpty() == false && laserIsBusy == false) {
-                EnergyRequest enreq = queue.peek();
-                if (enreq.energy <= _energyNumber) {
-                    executeRequestUnsafe(queue);
+                EnergyRequest enreq = null;
+                for (EnergyRequest e: queue) {
+                    if (!e.status.equals("done")) {
+                        enreq = e;
+                        break;
+                    }
+                }
+                if (enreq != null && enreq.energy <= _energyNumber) {
+                    executeRequestUnsafe(enreq);
                 }
             }
 

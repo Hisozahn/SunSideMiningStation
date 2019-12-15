@@ -53,8 +53,11 @@ public class EnergyRequestService {
             return new JsonResponse(JsonResponse.StatusCode.INTERNAL_SERVER_ERROR, "Invalid energy request");
 
         MercuryBase mBase = MercuryBase.getInstance();
-        mBase.provideEnergy(location, requiredEnergy);
-        return new JsonResponse(JsonResponse.StatusCode.OK);
+        int requestId = mBase.provideEnergy(location, requiredEnergy);
+        if (requestId < 0)
+            return new JsonResponse(JsonResponse.StatusCode.INTERNAL_SERVER_ERROR, "Internal energy request failure");
+
+        return new JsonResponse(JsonResponse.StatusCode.OK, "" + requestId);
     }
     @Path("check_requests")
     @POST
