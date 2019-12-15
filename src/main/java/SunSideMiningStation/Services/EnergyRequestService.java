@@ -42,6 +42,7 @@ public class EnergyRequestService {
 
         return new JsonResponse(JsonResponse.StatusCode.OK, "" + id.toString());
     }
+
     @Path("request")
     @POST
     public JsonResponse MakeEnergyOrder(@FormParam("token") String token,
@@ -59,9 +60,10 @@ public class EnergyRequestService {
 
         return new JsonResponse(JsonResponse.StatusCode.OK, "" + requestId);
     }
+
     @Path("check_requests")
     @POST
-    public Object CheckEnergyOrders(@FormParam("token") String token){
+    public Object CheckEnergyOrders(@FormParam("token") String token) {
         String location = getLocation(token);
         if (location == null)
             return new JsonResponse(JsonResponse.StatusCode.INTERNAL_SERVER_ERROR, "Invalid auth token");
@@ -69,7 +71,6 @@ public class EnergyRequestService {
         String str = "";
         MercuryBase mBase = MercuryBase.getInstance();
         List<OrderInfo> requested = mBase.checkRequests(location);
-
         return requested;
     }
 

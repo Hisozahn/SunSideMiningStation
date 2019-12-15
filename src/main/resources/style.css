@@ -116,3 +116,17 @@ div {
     transition: .3s linear;
 }
 .widget-list a:hover {color: #ff6001;}
+
+table{
+    position: relative;
+    top: 350px;
+}
+
+table,th,td{
+    border: 1px solid white;
+    margin: 0 auto;
+}
+
+th,td{
+    padding:5px;
+}

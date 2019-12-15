@@ -20,17 +20,97 @@
     </div>
 </header>
 
-<form action="http://localhost:8080/rest/energy/login" method="post">
-    <h2>Login to the system:</h2>
-    <div class="field">
-        <label for>Enter your location:</label>
-        <input type="text" name="location" value="Earth" align="right">
-    </div>
-    <div class="field">
-        <label for>Enter your password:</label>
-        <input type="text" name="password" value="" align="right">
+<script type="text/javascript" language="javascript">
+    function call() {
+        document.cookie = 'token=; expires=Thu, 01 Jan 1970 00:00:00 UTC;';
+        var xhr = new XMLHttpRequest();
+        var formData = new URLSearchParams();
+        formData.append("location", document.getElementById("location").value);
+        formData.append("password", document.getElementById("password").value);
+        xhr.onload = function() {
+            if (xhr.status == 200){
+                var json = xhr.responseText;
+                var obj = JSON.parse(json);
+                if (obj.statusCode == 200) {
+                    document.cookie = "token="+obj.message;
+                    myFunction();
+                }
+                else if (obj.statusCode != 200) {
+                    alert('Request failed.  Returned status of ' + obj._message);
+                }
+            }
+            else if (xhr.status !=200){
+                alert('Bad request')
+            };
+            }
+
+            xhr.open('POST', 'http://localhost:8080/rest/energy/login');
+            xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+
+            xhr.send(formData.toString());
+            return false;
+    }
+    function myFunction(){
+        var xhr = new XMLHttpRequest();
+        var formData = new URLSearchParams();
+        formData.append("token", getCookie("token"));
+        xhr.onload = function (){
+            if (xhr.status ==200){
+                var json = xhr.responseText;
+                var obj = JSON.parse(json);
+                if (typeof obj.statusCode == "undefined" && !obj.statusCode){
+                    var table ="<table><th>OrderId</th><th>Energy, kW</th><th>Status</th>";
+                    for (var i=0;i<obj.length;i++){
+                        table+="<tr><td>"+obj[i].id+"</td><td>"
+                            +obj[i].energy+"</td><td>"
+                            +obj[i].status+"</td></tr>";
+                    }
+                    table+="</table>";
+                    document.getElementById("formx").innerHTML = table;
+                }
+
+                else if (obj.statusCode != 200){
+                    alert('Request failed.  Returned status of ' + obj.message);
+                }
+            }
+        };
+        xhr.open('POST', 'http://localhost:8080/rest/energy/check_requests');
+        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+
+        xhr.send(formData.toString());
+    }
+
+    function getCookie(cname) {
+        var name = cname + "=";
+        var decodedCookie = decodeURIComponent(document.cookie);
+        var ca = decodedCookie.split(';');
+        for(var i = 0; i < ca.length; i++) {
+            var c = ca[i];
+            while (c.charAt(0) == ' ') {
+                c = c.substring(1);
+            }
+            if (c.indexOf(name) == 0) {
+                return c.substring(name.length, c.length);
+            }
+        }
+        return "";
+    }
+</script>
+
+<div id = "formx">
+    <form onsubmit="return call()">
+        <h2>Login to the system:</h2>
+        <div class="field">
+            <label for>Enter your location:</label>
+            <input id="location" type="text" name="location" value="Earth" align="right">
         </div>
-    <div><input class="button" type=submit value="Login"></div>
-</form>
+        <div class="field">
+            <label for>Enter your password:</label>
+            <input id="password" type="text" name="password" value="" align="right">
+        </div>
+        <div><input class="button" type=submit value="Login"></div>
+    </form>
+</div>
+
 </body>
 </html>

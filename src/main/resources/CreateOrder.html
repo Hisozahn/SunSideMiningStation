@@ -10,7 +10,7 @@
     <h3 class="widget-title">Menu</h3>
     <ul class="widget-list">
         <li><a href="http://localhost:8080/resource/Customer.html">Main</a></li>
-        <li><a href="http://localhost:8080/resource/CheckOrder.html">Check order status</a></li>
+        <li><a href="#" onclick="myFunction()">Check order status</a></li>
         <li><a href="http://localhost:8080/resource/CancelOrder.html">Cancel order</a></li>
     </ul>
 </div>
@@ -19,19 +19,94 @@
         <h1>Sun Side Mining Station</h1>
     </div>
 </header>
-<form onsubmit="alert('Order is being processed!');" action="http://localhost:8080/rest/energy/request" method="post">
-    <h2>Make an order to get energy:</h2>
-    <div class="field">
-        <label for>Enter your access token: </label>
-        <input type="text" name="token" value="">
-    </div>
-    <div class="field">
-        <label for>Enter required number of energy:</label>
-        <input type="text" name="requiredEnergy" value="20">
-    </div>
-    <div>
-        <input class="button" type=submit value="Make an order">
-    </div>
-</form>
+
+<script type="text/javascript" language="javascript">
+    function call() {
+        var xhr = new XMLHttpRequest();
+        var formData = new URLSearchParams();
+        formData.append("token", getCookie("token"));
+        formData.append("requiredEnergy", document.getElementById("requiredEnergy").value);
+        xhr.onload = function() {
+            if (xhr.status == 200){
+                var json = xhr.responseText;
+                var obj = JSON.parse(json);
+                if (obj.statusCode == 200) {
+                    alert("Created new order with order ID " + obj.message);
+                }
+                else if (obj.statusCode != 200) {
+                    alert('Request failed.  Returned status of ' + obj.message);
+                }
+            }
+            else if (xhr.status !=200){
+                alert('Bad request')
+            };
+        }
+
+        xhr.open('POST', 'http://localhost:8080/rest/energy/request');
+        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+
+        xhr.send(formData.toString());
+        return false;
+    }
+
+    function getCookie(cname) {
+        var name = cname + "=";
+        var decodedCookie = decodeURIComponent(document.cookie);
+        var ca = decodedCookie.split(';');
+        for(var i = 0; i < ca.length; i++) {
+            var c = ca[i];
+            while (c.charAt(0) == ' ') {
+                c = c.substring(1);
+            }
+            if (c.indexOf(name) == 0) {
+                return c.substring(name.length, c.length);
+            }
+        }
+        return "";
+    }
+
+    function myFunction(){
+        var xhr = new XMLHttpRequest();
+        var formData = new URLSearchParams();
+        formData.append("token", getCookie("token"));
+        xhr.onload = function (){
+            if (xhr.status ==200){
+                var json = xhr.responseText;
+                var obj = JSON.parse(json);
+                if (typeof obj.statusCode == "undefined" && !obj.statusCode){
+                    var table ="<table><th>OrderId</th><th>Energy, kW</th><th>Status</th>";
+                    for (var i=0;i<obj.length;i++){
+                        table+="<tr><td>"+obj[i].id+"</td><td>"
+                            +obj[i].energy+"</td><td>"
+                            +obj[i].status+"</td></tr>";
+                    }
+                    table+="</table>";
+                    document.getElementById("formx").innerHTML = table;
+                }
+
+                else if (obj.statusCode != 200){
+                    alert('Request failed.  Returned status of ' + obj.message);
+                }
+            }
+        };
+        xhr.open('POST', 'http://localhost:8080/rest/energy/check_requests');
+        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+
+        xhr.send(formData.toString());
+    }
+</script>
+
+<div id="formx">
+    <form onsubmit="return call()">
+        <h2>Make an order to get energy:</h2>
+        <div class="field">
+            <label for>Enter required number of energy:</label>
+            <input id="requiredEnergy" type="text" name="requiredEnergy" value="20">
+        </div>
+        <div>
+            <input class="button" type=submit value="Make an order">
+        </div>
+    </form>
+</div>
 </body>
 </html>
