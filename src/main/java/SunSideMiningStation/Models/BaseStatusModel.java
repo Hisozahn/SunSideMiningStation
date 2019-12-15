@@ -24,6 +24,8 @@ public class BaseStatusModel {
     private boolean laserIsBusy = false;
 
     class EnergyRequest {
+        public static final String STATUS_DONE = "done";
+        public static final String STATUS_IN_PROGRESS = "in progress";
         public int id;
         public int energy;
         public String location;
@@ -98,7 +100,8 @@ public class BaseStatusModel {
             _requiredEnergyNumber = 0;
             _lastEnergyRequestId = 0;
             for (EnergyRequest e: queue) {
-                _requiredEnergyNumber += e.energy;
+                if (!e.status.equals(EnergyRequest.STATUS_DONE))
+                    _requiredEnergyNumber += e.energy;
                 _lastEnergyRequestId = e.id;
             }
         }
@@ -160,7 +163,7 @@ public class BaseStatusModel {
             while (iter.hasNext()){
                 EnergyRequest e;
                 e = iter.next();
-                if(e.location.equals(location) && e.id == id){
+                if(e.location.equals(location) && e.id == id && !e.status.equals(EnergyRequest.STATUS_DONE)){
                     iter.remove();
                     canceled = true;
                     _requiredEnergyNumber -= e.energy;
@@ -225,7 +228,7 @@ public class BaseStatusModel {
         if(energy > 0) {
             synchronized (csvMonitor) {
                 Queue<EnergyRequest> queue = readCSV();
-                queue.add(new EnergyRequest(++_lastEnergyRequestId, energy,location, "in progress"));
+                queue.add(new EnergyRequest(++_lastEnergyRequestId, energy,location, EnergyRequest.STATUS_IN_PROGRESS));
                 writeCSV(queue);
             }
             _requiredEnergyNumber += energy;
@@ -270,7 +273,7 @@ public class BaseStatusModel {
 
     private void executeRequestUnsafe(EnergyRequest enreq) {
         fireLaser(enreq.energy, enreq.location);
-        enreq.status = "done";
+        enreq.status = EnergyRequest.STATUS_DONE;
     }
 
     private void baseLoopTick( ) throws InterruptedException {
@@ -280,7 +283,7 @@ public class BaseStatusModel {
             if (queue.isEmpty() == false && laserIsBusy == false) {
                 EnergyRequest enreq = null;
                 for (EnergyRequest e: queue) {
-                    if (!e.status.equals("done")) {
+                    if (!e.status.equals(EnergyRequest.STATUS_DONE)) {
                         enreq = e;
                         break;
                     }
